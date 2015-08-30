@@ -1,0 +1,27 @@
+{
+  "modupdater": { // Required
+    "new_vers": "0.29.0", // Required
+    "cf_settings": { // Required
+      "type": "beta", // Optional, will default to "release" if omitted
+      "cf_api_key": "jhdfjhdfghjdfghjdfghjgdf", // Required
+      "cf_project": 9769283495845, // Required
+      "file_name": "Flaxbeard's-Steam-Power-1.7.10-0.29.0.jar", // Optional, will default to everything after the last slash in file_dir if omitted
+      "file_dir": "elifoster/dev/fsp/build/lib/Flaxbeards-Steam-Power-1.7.10-0.29.0.jar", // Required
+      "game_vers": "1.7.10" // Required
+    },
+    "issues_bool": true, // Required
+    "issues_url": "http://github.com/esteemed-innovation/flaxbeards-steam-power/issues", // Required if issues_bool is true
+    "changelog": { // Optional
+      "entry": { // Required if changelog is not omitted
+        "type": "FIX", // Optional
+        "changes": "Fixed the bug", // Required
+        "issue": 69 // Optional
+      }
+    },
+    "twitter_bool": true, // Required
+    "twitter_un": "SatanNicholas", // Required if twitter_bool is true
+    "mod_name": "Flaxbeard's Steam Power", // Required
+    "wiki_bool": true, // Required
+    "wiki_page": "Flaxbeard's Steam Power" // Optional, defaults to mod_name if omitted
+  }
+}
