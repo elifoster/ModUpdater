@@ -2,9 +2,9 @@
   "modupdater": { // Required
     "new_vers": "0.29.0", // Required
     "cf_settings": { // Required
-      "type": "beta", // Optional, will default to "release" if omitted
-      "cf_api_key": "jhdfjhdfghjdfghjdfghjgdf", // Required
-      "cf_project": 9769283495845, // Required
+      "type": "b", // Optional, will default to "r" if omitted or provided an invalid string. a = alpha, b = beta, r = release
+      "api_key": "jhdfjhdfghjdfghjdfghjgdf", // Required
+      "project": 9769283495845, // Required
       "file_name": "Flaxbeard's-Steam-Power-1.7.10-0.29.0.jar", // Optional, will default to everything after the last slash in file_dir if omitted
       "file_dir": "elifoster/dev/fsp/build/lib/Flaxbeards-Steam-Power-1.7.10-0.29.0.jar", // Required
       "game_vers": "1.7.10" // Required
@@ -20,8 +20,13 @@
     },
     "twitter_bool": true, // Required
     "twitter_un": "SatanNicholas", // Required if twitter_bool is true
+    "tweet_custom": "Updated FSP to 0.29.0!!!!! GET IT AT CURSEFORGE!", // Optional, defaults to preset message depending on the mod name's length
     "mod_name": "Flaxbeard's Steam Power", // Required
-    "wiki_bool": true, // Required
-    "wiki_page": "Flaxbeard's Steam Power" // Optional, defaults to mod_name if omitted
+    "wiki_settings": {
+      "wiki_bool": true, // Required
+      "wiki_page": "Flaxbeard's Steam Power/Changelog", // Optional, defaults to mod_name/Changelog if omitted.
+      "wiki_un": "TheSatanicSanta", // Required if wiki_bool is true
+      "section_size": 2, // Optional, defaults to 2 if omitted or is < 2
+    }
   }
 }
