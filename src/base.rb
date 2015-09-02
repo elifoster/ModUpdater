@@ -146,15 +146,19 @@ def handle_changelog_json(json)
             if issue_url != nil && entry["issue"] != nil && inner["issues_bool"] == true
               changeissue = entry["issue"]
               $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange} ([#{issue_url}/#{changeissue} ##{changeissue}]).\n"
+              $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange} ([[#{issue_url}/#{changeissue}|##{changeissue}]]).\n"
             else
-              $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange}\n"
+              $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange}.\n"
+              $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange}.\n"
             end
           else
             if issue_url != nil && entry["issue"] != nil && inner["issues_bool"] == true
               changeissue = entry["issue"]
-              $wikichangelog = $wikichangelog + "* #{changechange} ([#{issue_url}/#{changeissue} ##{changeissue}])\n"
+              $wikichangelog = $wikichangelog + "* #{changechange} ([#{issue_url}/#{changeissue} ##{changeissue}]).\n"
+              $cfchangelog = $cfchangelog + "* #{changechange} ([[#{issue_url}/#{changeissue}|##{changeissue}]]).\n"
             else
-              $wikichangelog = $wikichangelog + "* #{changechange}\n"
+              $wikichangelog = $wikichangelog + "* #{changechange}.\n"
+              $cfchangelog = $cfchangelog + "* #{changechange}.\n"
             end
           end
         else
