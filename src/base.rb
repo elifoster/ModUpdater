@@ -1,6 +1,6 @@
 require 'json'
 require 'mediawiki_api'
-require_relative 'utils.rb'
+require_relative 'bot.rb'
 require_relative 'libs/wikiutils.rb'
 
 $wikichangelog = ""
@@ -163,6 +163,7 @@ def handle_changelog_json(json)
           end
         else
         die_with_error("changes", "string")
+        end
       end
     end
   end
@@ -178,12 +179,7 @@ def call_everything()
     file: $file_dir
   }
 
-  if $twitter_bool == true
-    puts "Please enter your Twitter password: "
-    $twitter_pw = gets.chomp
-    $twitter = Bot::Twitter.new
-    $twitter.tweet($twitter_msg)
-  end
+
 
   if $wiki_bool == true
     puts "Please enter your Wiki password: "
@@ -214,13 +210,18 @@ end
 puts "Please input your JSON configuration file: "
 file_name = gets.chomp
 file = File.read(file_name)
-hash = JSON.parse(file)
+json = JSON.parse(file)
 
 handle_base_json(json)
 handle_cf_json(json)
-handle_twitter_json(json)
 handle_wiki_json(json)
+handle_twitter_json(json)
 handle_changelog_json(json)
 
-call_everything()
+# call_everything()
+if $twitter_bool == true
+  puts "Please enter your Twitter password: "
+  $twitter_pw = gets.chomp
+  system("twitter.pl", $twitter_un, $twitter_pw, $twitter_msg)
+end
 exit

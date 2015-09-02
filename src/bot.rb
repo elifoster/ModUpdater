@@ -1,5 +1,4 @@
 require 'net/http'
-require 'twitter'
 
 module Bot
   class CurseForge
@@ -24,19 +23,6 @@ module Bot
           exit "Provided parameters have an error in their form. Please check your JSON or report it to the ModUpdater author"
         end
       end
-    end
-  end
-
-  class Twitter
-    def initialize()
-      $client = Twitter::REST::Client.new do |config|
-        config.consumer_key = ""
-        config.consumer_secret = ""
-      end
-    end
-
-    def tweet(message)
-      $client.update(message)
     end
   end
 end
