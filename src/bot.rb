@@ -1,26 +1,41 @@
-require 'net/http'
+require 'open-uri'
 
 module Bot
   class CurseForge
     def initialize(projectid)
-      @cfapi = "http://minecraft.curseforge.com/projects/#{projectid}/upload-file.json"
+      @uploadurl = "https://minecraft.curseforge.com/api/projects/#{projectid}/upload-file"
+      @versionurl = "https://minecraft.curseforge.com/api/game/versions"
     end
 
-    def upload(params)
-      request = URI(@cfapi)
-      request.query = URI.encode_www_form(params)
-      response = Net::HTTP.get_response(request)
-      if response.is_a? Net::HTTPSuccess || response == '201'
+    def get_versions(api_key)
+      uri = open(@versionurl, "X-Api-Token" => api_key)
+      return uri.read
+    end
+
+    def upload(params, api_key)
+      uri = URI.parse(@uploadurl)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      res = http.post(uri.path, params, 'X-Api-Token' => api_key)
+      if res.is_a? Net::HTTPSuccess || res == '201'
         return true
       else
-        if response == '403'
-          exit "You do not have permission to edit that project, or your API key was incorrect."
-        elsif response == '404'
-          exit "Project could not be found"
-        elsif response == '405'
-          exit "ModUpdater dev did GET instead of POST. Please report this to the author."
-        elsif response == '422'
-          exit "Provided parameters have an error in their form. Please check your JSON or report it to the ModUpdater author"
+        if res == '403'
+          puts "You do not have permission to edit that project, or your API key was incorrect."
+          exit 1
+        elsif res == '404'
+          puts "Project could not be found"
+          exit 1
+        elsif res == '405'
+          puts "ModUpdater dev did GET instead of POST. Please report this to the author."
+          exit 1
+        elsif res == '422'
+          puts "Provided parameters have an error in their form. Please check your JSON or report it to the ModUpdater author"
+          exit 1
+        else
+          puts "What happened is unknown. Report it to the developer."
+          puts "response body: #{res.body}"
+          exit 1
         end
       end
     end

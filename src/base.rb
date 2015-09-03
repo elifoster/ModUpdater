@@ -1,5 +1,6 @@
 require 'json'
 require 'mediawiki_api'
+require 'io/console'
 require_relative 'bot.rb'
 require_relative 'libs/wikiutils.rb'
 
@@ -86,6 +87,7 @@ def handle_wiki_json(json)
   if $inner["wiki_settings"] != nil
     $wiki = $inner["wiki_settings"]
     if $wiki["wiki_bool"] != nil
+      $wiki_bool = $wiki["wiki_bool"]
       if $wiki["wiki_bool"] == true
         if $wiki["wiki_page"] == nil
           if $wiki["mod_name"] != nil
@@ -136,74 +138,91 @@ def handle_changelog_json(json)
   end
 
   if $inner["changelog"] != nil
-    if $inner["changelog"]["entry"] != nil
-      $wikichangelog = "=" * $section_size + $new_vers + "=" * $section_size
-      $inner["changelog"].each do |entry|
-        if entry["changes"] != nil
-          changechange = entry["changes"]
-          if entry["type"] != nil
-            changetype = entry["type"]
-            if issue_url != nil && entry["issue"] != nil && inner["issues_bool"] == true
-              changeissue = entry["issue"]
-              $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange} ([#{issue_url}/#{changeissue} ##{changeissue}]).\n"
-              $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange} ([[#{issue_url}/#{changeissue}|##{changeissue}]]).\n"
-            else
-              $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange}.\n"
-              $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange}.\n"
-            end
+    $wikichangelog = "=" * $section_size + " #{$new_vers} " + "=" * $section_size + "\n"
+    $inner["changelog"].each do |entry|
+      if entry["changes"] != nil
+        changechange = entry["changes"]
+        if entry["type"] != nil
+          changetype = entry["type"]
+          if $issue_url != nil && entry["issue"] != nil && $inner["issues_bool"] == true
+            changeissue = entry["issue"]
+            $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange} ([#{$issue_url}/#{changeissue} ##{changeissue}]).\n"
+            $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange} ([[#{$issue_url}/#{changeissue}|##{changeissue}]]).\n"
           else
-            if issue_url != nil && entry["issue"] != nil && inner["issues_bool"] == true
-              changeissue = entry["issue"]
-              $wikichangelog = $wikichangelog + "* #{changechange} ([#{issue_url}/#{changeissue} ##{changeissue}]).\n"
-              $cfchangelog = $cfchangelog + "* #{changechange} ([[#{issue_url}/#{changeissue}|##{changeissue}]]).\n"
-            else
-              $wikichangelog = $wikichangelog + "* #{changechange}.\n"
-              $cfchangelog = $cfchangelog + "* #{changechange}.\n"
-            end
+            $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange}.\n"
+            $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange}.\n"
           end
         else
-        die_with_error("changes", "string")
+          if $issue_url != nil && entry["issue"] != nil && $inner["issues_bool"] == true
+            changeissue = entry["issue"]
+            $wikichangelog = $wikichangelog + "* #{changechange} ([#{issue_url}/#{changeissue} ##{changeissue}]).\n"
+            $cfchangelog = $cfchangelog + "* #{changechange} ([[#{issue_url}/#{changeissue}|##{changeissue}]]).\n"
+          else
+            $wikichangelog = $wikichangelog + "* #{changechange}.\n"
+            $cfchangelog = $cfchangelog + "* #{changechange}.\n"
+          end
         end
+      else
+      die_with_error("changes", "string")
       end
+    end
+  end
+end
+
+def get_version_name_from_id(json, name)
+  hash = JSON.parse(json)
+  hash.each do |i|
+    if i["name"] == name
+      return i["id"]
     end
   end
 end
 
 def call_everything()
   $cf = Bot::CurseForge.new($project)
+  version_id = get_version_name_from_id($cf.get_versions($api_key), $game_vers)
   cf_params = {
     name: $file_name,
-    game_version: $game_vers,
-    file_type: $release_type,
-    changelog: $cfchangelog,
-    file: $file_dir
+    game_version: version_id,
+    releaseType: $release_type,
+    change_log: $cfchangelog,
+    file: $file_dir,
+    change_markup_type: 'creole'
   }
 
-
+  if $cf.upload(cf_params, $api_key) != true
+    exit "Something went wrong"
+  end
 
   if $wiki_bool == true
     puts "Please enter your Wiki password: "
-    $wiki_pw = gets.chomp
+    $wiki_pw = STDIN.noecho(&:gets).chomp
     $mw = MediawikiApi::Client.new("http://ftb.gamepedia.com/api.php")
     $mw.log_in($wiki_un, $wiki_pw)
     $other_mw = Wiki_Utils::Client.new("http://ftb.gamepedia.com/api.php")
-    text = $other_mw.getwikitext($wiki_page)
+    text = $other_mw.get_wikitext($wiki_page)
     if text == nil
       text = "On this page, the changelog for the #{$mod_name} mod is located.\n\n#{$wikichangelog}"
     else
       text.each_line do |line|
         if line[0,1] == "="
-          text = gsub(line, $wikichangelog + "\n" + line)
+          text = text.gsub(line, $wikichangelog + "\n" + line)
         end
       end
     end
     params = {
       title: $wiki_page,
       text: text,
-      summary: "Updating #{$mod_name} changelog for #{$new_vers} version.",
+      summary: "Updating #{$mod_name} changelog for #{$new_vers} version (test run).",
       minor: 1,
     }
     $mw.edit(params)
+  end
+
+  if $twitter_bool == true
+    puts "Please enter your Twitter password: "
+    $twitter_pw = STDIN.noecho(&:gets).chomp
+    system("perl", "twitter.pl", $twitter_un, $twitter_pw, $twitter_msg)
   end
 end
 
@@ -218,10 +237,6 @@ handle_wiki_json(json)
 handle_twitter_json(json)
 handle_changelog_json(json)
 
-# call_everything()
-if $twitter_bool == true
-  puts "Please enter your Twitter password: "
-  $twitter_pw = gets.chomp
-  system("twitter.pl", $twitter_un, $twitter_pw, $twitter_msg)
-end
+call_everything()
+
 exit

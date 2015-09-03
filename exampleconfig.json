@@ -11,13 +11,18 @@
     },
     "issues_bool": true, // Required
     "issues_url": "http://github.com/esteemed-innovation/flaxbeards-steam-power/issues", // Required if issues_bool is true
-    "changelog": { // Optional
-      "entry": { // Required if changelog is not omitted
+    "changelog": [ // Optional
+      {
         "type": "FIX", // Optional
         "changes": "Fixed the bug", // Required
         "issue": 69 // Optional
+      },
+      { // An infinite number of object arrays can be used
+        "type": "NEW", // Optional
+        "changes": "Added the feature", // Required
+        "issue": 42 // Optional
       }
-    },
+    ],
     "twitter_bool": true, // Required
     "twitter_un": "SatanNicholas", // Required if twitter_bool is true
     "tweet_custom": "Updated FSP to 0.29.0!!!!! GET IT AT CURSEFORGE!", // Optional, defaults to preset message depending on the mod name's length
