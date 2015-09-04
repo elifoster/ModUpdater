@@ -1,6 +1,7 @@
 require 'json'
 require 'mediawiki_api'
 require 'io/console'
+require 'mime/types'
 require_relative 'bot.rb'
 require_relative 'libs/wikiutils.rb'
 
@@ -33,10 +34,17 @@ def handle_cf_json(json)
     $project = $cf["project"]
     $file_name = $cf["file_name"]
     $file_dir = $cf["file_dir"]
-    $game_vers = $cf["game_vers"]
+    $game_versions = Array.new
+    if $cf["game_versions"] != nil
+      $cf["game_versions"].each do |vers|
+        $game_versions.push(vers)
+      end
+    else
+      die_with_error("game_versions", "array")
+    end
     if $api_key != nil && $project != nil && $file_dir != nil
-      if $release_type != "r" && $release_type != "b" && $release_type != "a"
-        $release_type = "r"
+      if $release_type != "release" && $release_type != "beta" && $release_type != "alpha"
+        $release_type = "release"
       end
       if $file_name == nil
         $file_name = file_dir.split('/')[-1]
@@ -178,19 +186,29 @@ def get_version_id_from_name(json, name)
   end
 end
 
+def get_extension_from_file(file)
+  return file.split('.')[-1]
+end
+
 def call_everything()
   $cf = Bot::CurseForge.new($project)
-  version_id = get_version_id_from_name($cf.get_versions($api_key), $game_vers)
-  cf_params = {
-    name: $file_name,
-    game_version: version_id,
-    releaseType: $release_type,
-    change_log: $cfchangelog,
-    file: $file_dir,
-    change_markup_type: 'creole'
+  version_ids = Array.new()
+  version_id = get_version_id_from_name($cf.get_versions($api_key), $game_versions)
+  $game_versions.each do |version_name|
+    version_id = get_version_id_from_name($cf.get_versions($api_key), version_name)
+    version_ids.push(version_id)
+  end
+  metadata_hash = {
+    :changelog => $cfchangelog,
+    :releaseType => $release_type,
+    :gameVersions => version_ids,
+    :displayName => $file_name,
+    :change_markup_type => 'creole'
   }
+  metadata_json = JSON.generate(metadata_hash)
+  type = MIME::Types.type_for(get_extension_from_file($file_dir))
 
-  if $cf.upload(cf_params, $api_key) != true
+  if $cf.upload(metadata_json, $file_dir, type, $api_key) != true
     exit "Something went wrong"
   end
 

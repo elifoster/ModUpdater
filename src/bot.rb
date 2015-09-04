@@ -1,4 +1,8 @@
-require 'open-uri'
+require 'open_uri_redirections'
+require 'net/http/post/multipart'
+require 'rest-client'
+require 'net/http'
+require 'net/https'
 
 module Bot
   class CurseForge
@@ -12,14 +16,24 @@ module Bot
       return uri.read
     end
 
-    def upload(params, api_key)
-      uri = URI.parse(@uploadurl)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      res = http.post(uri.path, params, 'X-Api-Token' => api_key)
+    def upload(metadata, file, mimetype, api_key)
+      uri = URI("#{@uploadurl}?token=#{api_key}")
+      req = Net::HTTP::Post::Multipart.new(
+        uri,
+        "metadata" => metadata,
+        "file" => UploadIO.new(File.new(file), mimetype)
+      )
+      res = Net::HTTP.start(
+        uri.host,
+        uri.port,
+        :use_ssl => true
+      ) do |http|
+        http.request(req)
+      end
       if res.is_a? Net::HTTPSuccess || res == '201'
         return true
       else
+        puts "You should probably report this to the ModUpdater developer."
         if res == '403'
           puts "You do not have permission to edit that project, or your API key was incorrect."
           exit 1

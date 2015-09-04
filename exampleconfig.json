@@ -7,7 +7,7 @@
       "project": 9769283495845, // Required
       "file_name": "Flaxbeard's-Steam-Power-1.7.10-0.29.0.jar", // Optional, will default to everything after the last slash in file_dir if omitted
       "file_dir": "elifoster/dev/fsp/build/lib/Flaxbeards-Steam-Power-1.7.10-0.29.0.jar", // Required
-      "game_vers": "1.7.10" // Required
+      "game_versions": ["1.7.10"] // Required
     },
     "issues_bool": true, // Required
     "issues_url": "http://github.com/esteemed-innovation/flaxbeards-steam-power/issues", // Required if issues_bool is true
