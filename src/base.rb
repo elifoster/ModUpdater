@@ -169,7 +169,7 @@ def handle_changelog_json(json)
   end
 end
 
-def get_version_name_from_id(json, name)
+def get_version_id_from_name(json, name)
   hash = JSON.parse(json)
   hash.each do |i|
     if i["name"] == name
@@ -180,7 +180,7 @@ end
 
 def call_everything()
   $cf = Bot::CurseForge.new($project)
-  version_id = get_version_name_from_id($cf.get_versions($api_key), $game_vers)
+  version_id = get_version_id_from_name($cf.get_versions($api_key), $game_vers)
   cf_params = {
     name: $file_name,
     game_version: version_id,
