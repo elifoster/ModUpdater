@@ -231,12 +231,29 @@ def call_everything()
     params = {
       title: $wiki_page,
       text: text,
-      summary: "Updating #{$mod_name} changelog for #{$new_vers} version (test run).",
+      summary: "Updating #{$mod_name} changelog for #{$new_vers} version.",
       minor: 1,
     }
     $mw.edit(params)
+    main_wiki_page = $wiki_page[0, $wiki_page.index("/Changelog")]
+    text = $other_mw.get_wikitext(main_wiki_page)
+    if text != nil
+      if text =~ /\|version\=(.*?)[\n]/
+        if text !~ /\|version=#{$new_vers}/
+          text = text.gsub(/\|version\=(.*?)[\n]/i, "|version=#{$new_vers}\n")
+        end
+      elsif text =~ /\{\{[Ii]nfobox mod/
+        text = text.gsub(/\{\{[Ii]nfobox mod/, "{{Infobox mod\n|version=#{$new_vers}")
+      end
+    end
+    params = {
+      title: main_wiki_page,
+      text: text,
+      summary: "Updating #{$mod_name} version to #{$new_vers} version.",
+      minor: 1
+    }
+    $mw.edit(params)
   end
-
   if $twitter_bool == true
     puts "Please enter your Twitter password: "
     $twitter_pw = STDIN.noecho(&:gets).chomp
