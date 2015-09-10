@@ -1,6 +1,7 @@
 package modupdater.gui.event.twitter;
 
 import modupdater.gui.ConfigTwitterGui;
+import modupdater.gui.ModUpdaterGui;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,11 +18,11 @@ public class TwitterTextActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         if (jTextField == ConfigTwitterGui.loginUser) {
-            ConfigTwitterGui.twitterUsername = jTextField.getText();
+            ModUpdaterGui.twitterUsername = jTextField.getText();
         }
 
         if (jTextField == ConfigTwitterGui.loginPass) {
-            ConfigTwitterGui.twitterPassword = jTextField.getText();
+            ModUpdaterGui.twitterPassword = jTextField.getText();
         }
     }
 }

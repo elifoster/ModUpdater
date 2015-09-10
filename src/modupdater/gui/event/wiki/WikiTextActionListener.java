@@ -1,6 +1,7 @@
 package modupdater.gui.event.wiki;
 
 import modupdater.gui.ConfigWikiGui;
+import modupdater.gui.ModUpdaterGui;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,23 +18,23 @@ public class WikiTextActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         if (jTextField == ConfigWikiGui.loginPass) {
-            ConfigWikiGui.wikiUsername = jTextField.getText();
+            ModUpdaterGui.wikiUsername = jTextField.getText();
         }
 
         if (jTextField == ConfigWikiGui.loginPass) {
-            ConfigWikiGui.wikiPassword = jTextField.getText();
+            ModUpdaterGui.wikiPassword = jTextField.getText();
         }
 
         if (jTextField == ConfigWikiGui.pageMain) {
-            ConfigWikiGui.wikiMainModPage = jTextField.getText();
+            ModUpdaterGui.wikiMainModPage = jTextField.getText();
         }
 
         if (jTextField == ConfigWikiGui.pageChangelog) {
-            ConfigWikiGui.wikiChangelogPage = jTextField.getText();
+            ModUpdaterGui.wikiChangelogPage = jTextField.getText();
         }
 
         if (jTextField == ConfigWikiGui.sectionSize) {
-            ConfigWikiGui.wikiSectionSize = Integer.parseInt(jTextField.getText());
+            ModUpdaterGui.wikiSectionSize = Integer.parseInt(jTextField.getText());
         }
     }
 }

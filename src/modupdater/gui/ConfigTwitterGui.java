@@ -1,6 +1,5 @@
 package modupdater.gui;
 
-import modupdater.gui.event.twitter.TwitterEnableItemListener;
 import modupdater.gui.event.twitter.TwitterTextActionListener;
 import modupdater.gui.util.MaxLengthDocument;
 
@@ -12,15 +11,9 @@ import java.awt.event.FocusListener;
 public class ConfigTwitterGui {
 
     private JFrame frameConfigTwitter;
-    private JToggleButton enableTwitter;
     public static JTextField loginUser;
     public static JPasswordField loginPass;
     public static JTextArea tweet;
-
-    public static boolean isTwitterEnabled = true;
-    public static String twitterUsername = "";
-    public static String twitterPassword = "";
-    public static String twitterTweet = "";
 
     public ConfigTwitterGui() {
         initialize();
@@ -33,14 +26,6 @@ public class ConfigTwitterGui {
         frameConfigTwitter.setBounds(100, 100, 450, 285);
         frameConfigTwitter.setVisible(true);
         frameConfigTwitter.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        enableTwitter = new JCheckBox("Enable Twitter");
-        enableTwitter.setSelected(true);
-        enableTwitter.addItemListener(new TwitterEnableItemListener());
-        GridBagConstraints gbcEnableTwitter = new GridBagConstraints();
-        gbcEnableTwitter.insets = new Insets(2, 2, 2, 2);
-        gbcEnableTwitter.gridx = 0;
-        gbcEnableTwitter.gridy = 0;
 
         JLabel userLabel = new JLabel("Username");
         GridBagConstraints gbcLabelUser = new GridBagConstraints();
@@ -95,7 +80,7 @@ public class ConfigTwitterGui {
 
             @Override
             public void focusLost(FocusEvent event) {
-                twitterTweet = tweet.getText();
+                ModUpdaterGui.tweet = tweet.getText();
             }
         });
         GridBagConstraints gbcTweet = new GridBagConstraints();
@@ -103,7 +88,6 @@ public class ConfigTwitterGui {
         gbcTweet.gridx = 1;
         gbcTweet.gridy = 3;
 
-        frameConfigTwitter.getContentPane().add(enableTwitter, gbcEnableTwitter);
         frameConfigTwitter.getContentPane().add(userLabel, gbcLabelUser);
         frameConfigTwitter.getContentPane().add(loginUser, gbcLoginUser);
         frameConfigTwitter.getContentPane().add(passLabel, gbcLabelPass);
