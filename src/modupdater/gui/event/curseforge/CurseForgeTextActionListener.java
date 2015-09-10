@@ -1,6 +1,7 @@
 package modupdater.gui.event.curseforge;
 
 import modupdater.gui.ConfigCurseForgeGui;
+import modupdater.gui.ModUpdaterGui;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,15 +17,15 @@ public class CurseForgeTextActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         if (jTextField == ConfigCurseForgeGui.apiKey) {
-            ConfigCurseForgeGui.apiKeyString = jTextField.getText();
+            ModUpdaterGui.apiKeyString = jTextField.getText();
         }
 
         if (jTextField == ConfigCurseForgeGui.fileName) {
-            ConfigCurseForgeGui.fileNameString = jTextField.getText();
+            ModUpdaterGui.fileNameString = jTextField.getText();
         }
 
         if (jTextField == ConfigCurseForgeGui.projectID) {
-            ConfigCurseForgeGui.projectIDInt = Integer.parseInt(jTextField.getText());
+            ModUpdaterGui.projectIDInt = Integer.parseInt(jTextField.getText());
         }
     }
 }
