@@ -4,9 +4,7 @@
     <api_key>jhdfjhdfghjdfghjdfghjgdf</api_key>
     <file_dir>elifoster/dev/fsp/build/lib/Flaxbeards-Steam-Power-1.7.10-0.29.0.jar</file_dir>
     <file_name>Flaxbeard's-Steam-Power-1.7.10-0.29.0.jar</file_name>
-    <game_versions>
-      <entry>1.7.10</entry>
-    </game_versions>
+    <game_versions>[&quot;1.7.10&quot;, &quot;1.6.4&quot;]</game_versions>
     <project>9769283495845</project>
     <type>b</type>
   </cf_settings>

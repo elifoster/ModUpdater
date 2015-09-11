@@ -21,7 +21,8 @@ end
 
 def die_with_error(valuename, type)
   type = type.upcase
-  exit "PROVIDED JSON DOES NOT HAVE #{valuename} #{type}!! FATAL!"
+  puts "PROVIDED JSON DOES NOT HAVE #{valuename} #{type}!! FATAL!"
+  exit 1
 end
 
 def handle_base_json(json)
@@ -42,13 +43,24 @@ def handle_cf_json(json)
     $cf = $inner["cf_settings"]
     $release_type = $cf["type"]
     $api_key = $cf["api_key"]
-    $project = $cf["project"]
+    if $cf["project"].is_a? String
+      $project = $cf["project"].to_i
+    else
+      $project = $cf["project"]
+    end
     $file_name = $cf["file_name"]
     $file_dir = $cf["file_dir"]
     $game_versions = Array.new
     if $cf["game_versions"] != nil
-      $cf["game_versions"].each do |vers|
-        $game_versions.push(vers)
+      if $cf["game_versions"].is_a? String
+        vers = JSON.parse($cf["game_versions"])
+        vers.each do |v|
+          $game_versions.push(v)
+        end
+      else
+        $cf["game_versions"].each do |v|
+          $game_versions.push(v)
+        end
       end
     else
       die_with_error("game_versions", "array")
@@ -207,8 +219,9 @@ def handle_changelog_json(json)
               changeissue = entry["issue"].to_i # For XML
             else
               changeissue = entry["issue"]
-            $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange} ([#{$issue_url}/#{changeissue} ##{changeissue}]).\n"
-            $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange} ([[#{$issue_url}/#{changeissue}|##{changeissue}]]).\n"
+              $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange} ([#{$issue_url}/#{changeissue} ##{changeissue}]).\n"
+              $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange} ([[#{$issue_url}/#{changeissue}|##{changeissue}]]).\n"
+            end
           else
             $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange}.\n"
             $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange}.\n"
@@ -219,8 +232,9 @@ def handle_changelog_json(json)
               changeissue = entry["issue"].to_i # For XML
             else
               changeissue = entry["issue"]
-            $wikichangelog = $wikichangelog + "* #{changechange} ([#{issue_url}/#{changeissue} ##{changeissue}]).\n"
-            $cfchangelog = $cfchangelog + "* #{changechange} ([[#{issue_url}/#{changeissue}|##{changeissue}]]).\n"
+              $wikichangelog = $wikichangelog + "* #{changechange} ([#{issue_url}/#{changeissue} ##{changeissue}]).\n"
+              $cfchangelog = $cfchangelog + "* #{changechange} ([[#{issue_url}/#{changeissue}|##{changeissue}]]).\n"
+            end
           else
             $wikichangelog = $wikichangelog + "* #{changechange}.\n"
             $cfchangelog = $cfchangelog + "* #{changechange}.\n"
@@ -324,18 +338,15 @@ file = File.read(file_name)
 if accepted_extensions.include? File.extname(file_name)
   if File.extname(file_name) == accepted_extensions[0]
     json = JSON.parse(file)
-    puts "JSON"
-    puts json
   elsif File.extname(file_name) == accepted_extensions[1]
     xml = Crack::XML.parse(file)
     json = xml.to_json
-    puts "XML"
-    puts json
+    json = JSON.parse(json)
   end
 else
   exit "Uh, you need to provide an XML or JSON"
 end
-exit
+
 handle_base_json(json)
 handle_cf_json(json)
 handle_wiki_json(json)
