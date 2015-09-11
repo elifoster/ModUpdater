@@ -9,6 +9,16 @@ require_relative 'libs/wikiutils.rb'
 $wikichangelog = ""
 $cfchangelog = ""
 
+def to_boolean(string)
+  if string =~ (/^true$/i)
+    return true
+  elsif string =~ (/^false$/i)
+    return false
+  else
+    raise ArgumentError.new "invalid value: #{string} for to_boolean"
+  end
+end
+
 def die_with_error(valuename, type)
   type = type.upcase
   exit "PROVIDED JSON DOES NOT HAVE #{valuename} #{type}!! FATAL!"
@@ -60,9 +70,18 @@ end
 
 def handle_twitter_json(json)
   if $inner["twitter_bool"] != nil
-    if $inner["twitter_bool"] == true
+    if $inner["twitter_bool"].is_a? String
+      if to_boolean($inner["twitter_bool"]) == true
+        $twitter_bool = true
+      elsif to_boolean($inner["twitter_bool"]) == false
+        $twitter_bool = false
+      end
+    else
+      $twitter_bool = $inner["twitter_bool"]
+    end
+
+    if $twitter_bool == true
       $twitter_un = $inner["twitter_un"]
-      $twitter_bool = true
       if $inner["tweet_custom"] != nil
         if $inner["tweet_custom"].length > 140
           name_length = $mod_name.length
@@ -84,8 +103,6 @@ def handle_twitter_json(json)
           $twitter_msg = "#{$mod_name} has updated to #{$new_vers}. Get it at CurseForge"
         end
       end
-    else
-      $twitter_bool = false
     end
   else
     die_with_error("twitter_bool", "boolean")
@@ -96,8 +113,16 @@ def handle_wiki_json(json)
   if $inner["wiki_settings"] != nil
     $wiki = $inner["wiki_settings"]
     if $wiki["wiki_bool"] != nil
-      $wiki_bool = $wiki["wiki_bool"]
-      if $wiki["wiki_bool"] == true
+      if $wiki["wiki_bool"].is_a? String
+        if to_boolean($wiki["wiki_bool"]) == true
+          $wiki_bool = true
+        elsif to_boolean($wiki["wiki_bool"]) == false
+          $wiki_bool = false
+        end
+      else
+        $wiki_bool = $inner["wiki_bool"]
+      end
+      if $wiki_bool == true
         if $wiki["wiki_page"] == nil
           if $wiki["mod_name"] != nil
             $mod_name = $wiki["mod_name"]
@@ -114,29 +139,30 @@ def handle_wiki_json(json)
             $wiki_page = $wiki["wiki_page"]
           end
         end
-      end
-      if $wiki["wiki_un"] == nil
-        die_with_error("wiki_un", "string")
-      else
-        $wiki_un = $wiki["wiki_un"]
-      end
 
-      if $wiki["section_size"] != nil
-        if $wiki["section_size"].is_a? String
-          if $wiki["section_size"].to_i < 2 || $wiki["section_size"].to_i > 6
-            $section_size = 2
+        if $wiki["wiki_un"] == nil
+          die_with_error("wiki_un", "string")
+        else
+          $wiki_un = $wiki["wiki_un"]
+        end
+
+        if $wiki["section_size"] != nil
+          if $wiki["section_size"].is_a? String
+            if $wiki["section_size"].to_i < 2 || $wiki["section_size"].to_i > 6
+              $section_size = 2
+            else
+              $section_size = $wiki["section_size"].to_i
+            end
           else
-            $section_size = $wiki["section_size"].to_i
+            if $wiki["section_size"] < 2 || $wiki["section_size"] > 6
+              $section_size = 2
+            else
+              $section_size = $wiki["section_size"]
+            end
           end
         else
-          if $wiki["section_size"] < 2 || $wiki["section_size"] > 6
-            $section_size = 2
-          else
-            $section_size = $wiki["section_size"]
-          end
+          $section_size = 2
         end
-      else
-        $section_size = 2
       end
     else
       die_with_error("wiki_bool", "boolean")
@@ -148,8 +174,18 @@ end
 
 def handle_changelog_json(json)
   if $inner["issues_bool"] != nil
+    if $inner["issues_bool"].is_a? String
+      if to_boolean($inner["issues_bool"]) == true
+        $issues_bool = true
+      elsif to_boolean($inner["issues_bool"]) == false
+        $issues_bool = false
+      end
+    else
+      $issues_bool = $inner["issues_bool"]
+    end
+
     if $inner["issues_url"] != nil
-      if $inner["issues_bool"] == true
+      if $issues_bool == true
         $issue_url = $inner["issues_url"]
       end
     else
