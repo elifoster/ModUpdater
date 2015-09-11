@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modupdater>
+  <cf_settings>
+    <api_key>jhdfjhdfghjdfghjdfghjgdf</api_key>
+    <file_dir>elifoster/dev/fsp/build/lib/Flaxbeards-Steam-Power-1.7.10-0.29.0.jar</file_dir>
+    <file_name>Flaxbeard's-Steam-Power-1.7.10-0.29.0.jar</file_name>
+    <game_versions>
+      <entry>1.7.10</entry>
+    </game_versions>
+    <project>9769283495845</project>
+    <type>b</type>
+  </cf_settings>
+  <changelog changes="Fixed the bug" issue="69" type="FIX" />
+  <changelog changes="Added the feature" issue="42" type="NEW" />
+  <issues_bool>true</issues_bool>
+  <issues_url>http://github.com/esteemed-innovation/flaxbeards-steam-power/issues</issues_url>
+  <mod_name>Flaxbeard's Steam Power</mod_name>
+  <new_vers>0.29.0</new_vers>
+  <tweet_custom>Updated FSP to 0.29.0!!!!! GET IT AT CURSEFORGE!</tweet_custom>
+  <twitter_bool>true</twitter_bool>
+  <twitter_un>SatanNicholas</twitter_un>
+  <wiki_settings>
+    <section_size>2</section_size>
+    <wiki_bool>true</wiki_bool>
+    <wiki_page>Flaxbeard's Steam Power/Changelog</wiki_page>
+    <wiki_un>TheSatanicSanta</wiki_un>
+  </wiki_settings>
+</modupdater>

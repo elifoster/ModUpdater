@@ -2,6 +2,7 @@ require 'json'
 require 'mediawiki_api'
 require 'io/console'
 require 'mime/types'
+require 'crack'
 require_relative 'bot.rb'
 require_relative 'libs/wikiutils.rb'
 
@@ -119,10 +120,23 @@ def handle_wiki_json(json)
       else
         $wiki_un = $wiki["wiki_un"]
       end
-      if $wiki["section_size"] == nil || $wiki["section_size"] < 2 || $wiki["section_size"] > 6
-        $section_size = 2
+
+      if $wiki["section_size"] != nil
+        if $wiki["section_size"].is_a? String
+          if $wiki["section_size"].to_i < 2 || $wiki["section_size"].to_i > 6
+            $section_size = 2
+          else
+            $section_size = $wiki["section_size"].to_i
+          end
+        else
+          if $wiki["section_size"] < 2 || $wiki["section_size"] > 6
+            $section_size = 2
+          else
+            $section_size = $wiki["section_size"]
+          end
+        end
       else
-        $section_size = $wiki["section_size"]
+        $section_size = 2
       end
     else
       die_with_error("wiki_bool", "boolean")
@@ -153,7 +167,10 @@ def handle_changelog_json(json)
         if entry["type"] != nil
           changetype = entry["type"]
           if $issue_url != nil && entry["issue"] != nil && $inner["issues_bool"] == true
-            changeissue = entry["issue"]
+            if entry["issue"].is_a? String
+              changeissue = entry["issue"].to_i # For XML
+            else
+              changeissue = entry["issue"]
             $wikichangelog = $wikichangelog + "* '''#{changetype}''': #{changechange} ([#{$issue_url}/#{changeissue} ##{changeissue}]).\n"
             $cfchangelog = $cfchangelog + "* **#{changetype}**: #{changechange} ([[#{$issue_url}/#{changeissue}|##{changeissue}]]).\n"
           else
@@ -162,7 +179,10 @@ def handle_changelog_json(json)
           end
         else
           if $issue_url != nil && entry["issue"] != nil && $inner["issues_bool"] == true
-            changeissue = entry["issue"]
+            if entry["issue"].is_a? String
+              changeissue = entry["issue"].to_i # For XML
+            else
+              changeissue = entry["issue"]
             $wikichangelog = $wikichangelog + "* #{changechange} ([#{issue_url}/#{changeissue} ##{changeissue}]).\n"
             $cfchangelog = $cfchangelog + "* #{changechange} ([[#{issue_url}/#{changeissue}|##{changeissue}]]).\n"
           else
@@ -261,11 +281,25 @@ def call_everything()
   end
 end
 
-puts "Please input your JSON configuration file: "
+accepted_extensions = [".json", ".xml"]
+puts "Please input your JSON or XML configuration file: "
 file_name = gets.chomp
 file = File.read(file_name)
-json = JSON.parse(file)
-
+if accepted_extensions.include? File.extname(file_name)
+  if File.extname(file_name) == accepted_extensions[0]
+    json = JSON.parse(file)
+    puts "JSON"
+    puts json
+  elsif File.extname(file_name) == accepted_extensions[1]
+    xml = Crack::XML.parse(file)
+    json = xml.to_json
+    puts "XML"
+    puts json
+  end
+else
+  exit "Uh, you need to provide an XML or JSON"
+end
+exit
 handle_base_json(json)
 handle_cf_json(json)
 handle_wiki_json(json)
