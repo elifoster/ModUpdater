@@ -16,7 +16,8 @@
 /.bundle/
 /vendor/bundle
 /lib/bundler/man/
-libs/
+src/libs/
+src/modupdater/libs/
 cookies.txt
 .idea/
 *.iml
