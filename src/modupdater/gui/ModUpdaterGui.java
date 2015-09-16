@@ -19,6 +19,7 @@ public class ModUpdaterGui {
     public static JButton buttonConfigWiki;
     public static JButton buttonConfigCurseForge;
     public static JButton buttonConfigTwitter;
+    private JButton buttonChangelog;
     private JButton buttonGo;
     private JButton browseJSON;
     public static JTextField browseJSONOutput;
@@ -127,20 +128,33 @@ public class ModUpdaterGui {
         gbcEnableTwitter.gridx = 0;
         gbcEnableTwitter.gridy = 2;
 
+        buttonChangelog = new JButton("Create Changelog");
+        buttonChangelog.setVisible(true);
+        buttonChangelog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ChangelogGui gui = new ChangelogGui();
+            }
+        });
+        GridBagConstraints gbcButtonChangelog = new GridBagConstraints();
+        gbcButtonChangelog.insets = new Insets(2, 2, 2, 2);
+        gbcButtonChangelog.gridx = 1;
+        gbcButtonChangelog.gridy = 3;
+
         browseJSON = new JButton("Use Old JSON Configuration");
         browseJSON.setVisible(true);
         browseJSON.addActionListener(new JSONBrowseActionListener(frameModUpdater));
         GridBagConstraints gbcBrowseJSON = new GridBagConstraints();
         gbcBrowseJSON.insets = new Insets(2, 2, 2, 2);
         gbcBrowseJSON.gridx = 0;
-        gbcBrowseJSON.gridy = 3;
+        gbcBrowseJSON.gridy = 4;
 
         browseJSONOutput = new JTextField(20);
         browseJSONOutput.setVisible(true);
         GridBagConstraints gbcBrowseJSONOutput = new GridBagConstraints();
         gbcBrowseJSONOutput.insets = new Insets(2, 2, 2, 2);
         gbcBrowseJSONOutput.gridx = 1;
-        gbcBrowseJSONOutput.gridy = 3;
+        gbcBrowseJSONOutput.gridy = 4;
 
         buttonGo = new JButton("Go!");
         buttonGo.setVisible(true);
@@ -152,7 +166,7 @@ public class ModUpdaterGui {
         GridBagConstraints gbcButtonGo = new GridBagConstraints();
         gbcButtonGo.insets = new Insets(2, 2, 2, 2);
         gbcButtonGo.gridx = 0;
-        gbcButtonGo.gridy = 4;
+        gbcButtonGo.gridy = 5;
 
         frameModUpdater.getContentPane().add(enableWiki, gbcEnableWiki);
         frameModUpdater.getContentPane().add(buttonConfigWiki, gbcButtonConfigWiki);
@@ -160,6 +174,7 @@ public class ModUpdaterGui {
         frameModUpdater.getContentPane().add(buttonConfigCurseForge, gbcButtonConfigCurseForge);
         frameModUpdater.getContentPane().add(enableTwitter, gbcEnableTwitter);
         frameModUpdater.getContentPane().add(buttonConfigTwitter, gbcButtonConfigTwitter);
+        frameModUpdater.getContentPane().add(buttonChangelog, gbcButtonChangelog);
         frameModUpdater.getContentPane().add(browseJSON, gbcBrowseJSON);
         frameModUpdater.getContentPane().add(browseJSONOutput, gbcBrowseJSONOutput);
         frameModUpdater.getContentPane().add(buttonGo, gbcButtonGo);
