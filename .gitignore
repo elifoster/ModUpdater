@@ -18,3 +18,4 @@
 /lib/bundler/man/
 /src/libs/
 cookies.txt
+.DS_Store
