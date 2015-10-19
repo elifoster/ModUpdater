@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/elifoster/ModUpdater.png?label=ready&title=Ready)](https://waffle.io/elifoster/ModUpdater)
 # ModUpdater
 A program to immensely help with uploading new versions of Minecraft mods to CurseForge
 
